@@ -1,10 +1,12 @@
-use process_wrap::tokio::{CreationFlags, TokioChildWrapper, TokioCommandWrap};
+use process_wrap::tokio::{TokioChildWrapper, TokioCommandWrap};
 use tokio::{
     io::AsyncRead,
     process::{ChildStdin, ChildStdout},
 };
 #[cfg(windows)]
 use windows::Win32::System::Threading::CREATE_NO_WINDOW;
+#[cfg(windows)]
+use process_wrap::tokio::CreationFlags;
 
 use super::{IntoTransport, Transport};
 use crate::service::ServiceRole;

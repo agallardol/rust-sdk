@@ -70,6 +70,9 @@ chrono = { version = "0.4.38", features = ["serde"] }
 [target.'cfg(all(target_family = "wasm", target_os = "unknown"))'.dependencies]
 chrono = { version = "0.4.38", default-features = false, features = ["serde", "clock", "std", "oldtime"] }
 
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.61.1", features = ["Win32_System_Threading"] }
+
 [features]
 default = ["base64", "macros", "server"]
 client = []

@@ -1,8 +1,10 @@
-use process_wrap::tokio::{TokioChildWrapper, TokioCommandWrap};
+use process_wrap::tokio::{CreationFlags, TokioChildWrapper, TokioCommandWrap};
 use tokio::{
     io::AsyncRead,
     process::{ChildStdin, ChildStdout},
 };
+#[cfg(windows)]
+use windows::Win32::System::Threading::CREATE_NO_WINDOW;
 
 use super::{IntoTransport, Transport};
 use crate::service::ServiceRole;
@@ -66,8 +68,10 @@ impl TokioChildProcess {
         let mut command_wrap = TokioCommandWrap::from(command);
         #[cfg(unix)]
         command_wrap.wrap(process_wrap::tokio::ProcessGroup::leader());
-        #[cfg(windows)]
-        command_wrap.wrap(process_wrap::tokio::JobObject);
+        #[cfg(windows)] {
+            command_wrap.wrap(CreationFlags(CREATE_NO_WINDOW));
+            command_wrap.wrap(process_wrap::tokio::JobObject);
+        }
         let (child, (child_stdout, child_stdin)) = child_process(command_wrap.spawn()?)?;
         Ok(Self {
             child: ChildWithCleanup { inner: child },
